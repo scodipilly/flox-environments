@@ -12,10 +12,10 @@ os.putenv('FLOX_DISABLE_METRICS', 'true')
 # Discover Flox environments
 ##############################################
 
+print(str(local('pwd', quiet=True)))
+print(str(local('find /Users/scodipilly/flox-environments -name manifest.toml', quiet=True)))
 environments = str(local(
-    'find . -path "*/.flox/env/manifest.toml" '
-    '| sed -E "s#^./([^/]+)/.flox/env/manifest.toml$#\\1#" '
-    '| sort -u',
+    'find . -path "*/.flox/env/manifest.toml" | sed -E "s#^./([^/]+)/.flox/env/manifest.toml$#\\1#" | sort -u',
     quiet=True,
     echo_off=True,
 )).strip().split('\n')
