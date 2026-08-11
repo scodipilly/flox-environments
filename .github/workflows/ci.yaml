@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  FLOX_FLOXHUB_TOKEN: ${{ secrets.FLOX_FLOXHUB_TOKEN }}
+  FLOX_DISABLE_METRICS: "true"
+
+jobs:
+  build-and-push:
+    name: Build and push environments
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        environment:
+          - hello
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Flox
+        uses: flox/install-flox-action@v2
+
+      - name: Build ${{ matrix.environment }}
+        run: flox activate --dir ${{ matrix.environment }} -- true
+
+      - name: Push ${{ matrix.environment }} to FloxHub
+        if: ${{ github.event_name != 'pull_request' && env.FLOX_FLOXHUB_TOKEN != '' }}
+        run: flox push --dir ${{ matrix.environment }} --force
