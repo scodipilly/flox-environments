@@ -1,41 +1,22 @@
----
-# Learn more about Renovate: https://docs.renovatebot.com/
 name: Renovate
-
 on:
   workflow_dispatch:
-    inputs:
-      dry-run:
-        description: Dry Run
-        default: "false"
-        required: true
-        type: choice
-        options:
-          - "false"
-          - "true"
-      log-level:
-        description: Log Level
-        default: debug
-        required: false
   schedule:
-    # Run every hour at the top of the hour
     - cron: "0 * * * *"
   push:
     branches:
-      - 'main'
+      - main
     paths:
-      - .github/renovate.json5
+      - .github/renovate.json
       - .github/workflows/renovate.yaml
-
-# Only run a single renovate workflow at a time
 concurrency:
   group: run-renovate-bot
   cancel-in-progress: true
-
 jobs:
   renovate:
-    uses: coreweave/actions/.github/workflows/run-renovate.yml@21c156df6d1d47eb37c63d175221c7b287840c8f # workflows-v2.85.0
-    secrets: inherit
-    with:
-      dry-run: ${{ inputs.dry-run }}
-      log-level: ${{ inputs.log-level }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: renovatebot/github-action@v41
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
