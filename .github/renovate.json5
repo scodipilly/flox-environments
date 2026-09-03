@@ -1,7 +1,13 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "github>coreweave/renovate-config",
-    "github>coreweave/renovate-config//automerge/expanded.json5#feat/automerge-rules-scodipilly"
+  "extends": ["config:base"],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["digest"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "squash",
+      "addLabels": ["automerge"]
+    }
   ]
 }
